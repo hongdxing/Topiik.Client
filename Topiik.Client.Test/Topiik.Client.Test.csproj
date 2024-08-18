@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="NUnit" Version="4.1.0" />
+    <PackageReference Include="NUnitTestAdapter" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\" />
+    <ProjectReference Include="..\Topiik.Client\Topiik.Client.csproj" />
   </ItemGroup>
 
 </Project>

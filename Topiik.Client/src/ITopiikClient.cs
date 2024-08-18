@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Topiik.Client
 {
-    internal interface ITopiikClient
+    public interface ITopiikClient
     {
 
         void Connect();
