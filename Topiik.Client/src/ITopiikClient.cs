@@ -13,58 +13,6 @@ namespace Topiik.Client
 
         void Connect();
 
-        string GetControllerLeaderAddr(string addr)
-        {
-            using (var client = SocketUtil.PrepareSocketClient(addr))
-            {
-                var buf = Proto.EncodeHeader(Commands.GET_CTLADDR, 1);
-                var req = new Req();
-                var data = req.Marshal();
-
-                // merge header and data(req)
-                buf = buf.Concat(data).ToArray();
-
-                // send
-                client.Send(buf);
-
-                BinaryReader br = new BinaryReader(new MemoryStream(buf));
-
-                var header = ReceiveHeader(client);
-                var result = ReceiveData(client, header.len);
-
-                return BitConverter.ToString(result);
-            }
-        }
-
-        private (int len, byte flag, byte datatye) ReceiveHeader(Socket client)
-        {
-            (int len, byte flag, byte datatye) header = (0, 0, 0);
-            byte[] buf = new byte[Proto.PROTO_HEADER_LEN];
-            var len = client.Receive(buf);
-            if (len != Proto.PROTO_HEADER_LEN)
-            {
-                throw new Exception("Receive header failed");
-            }
-            header = Proto.ParseHeader(buf);
-
-            return header;
-        }
-
-        private byte[] ReceiveData(Socket client, int len)
-        {
-            byte[] buf = new byte[len];
-            var receivedLen = client.Receive(buf);
-            if (receivedLen != len)
-            {
-                throw new Exception("Receive data failed");
-            }
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buf);
-            }
-            return buf;
-        }
-
         /* String Begin */
         string Set(string key, string value, long ttl = long.MaxValue, bool get= false, Nullable<Boolean> exist = null);
         string Get(string key);

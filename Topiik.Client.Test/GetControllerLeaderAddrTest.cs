@@ -7,8 +7,7 @@ using NUnit.Framework;
 
 namespace Topiik.Client.test
 {
-
-    internal class GetControllerLeaderAddrTest
+    public class GetControllerLeaderAddrTest
     {
 
         private string serverAddr;

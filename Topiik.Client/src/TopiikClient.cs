@@ -22,13 +22,13 @@ namespace Topiik.Client
 
         public void Connect()
         {
-            var controllerLeaderAddr = GetControllerLeaderAddr();
-            System.Console.WriteLine(controllerLeaderAddr);
+            var controllerLeaderAddr = GetControllerLeaderAddr(ServerList.First());
+            Console.WriteLine(controllerLeaderAddr);
         }
 
-        private string GetControllerLeaderAddr()
+        string GetControllerLeaderAddr(string addr)
         {
-            using (var client = SocketUtil.PrepareSocketClient(ServerList[0]))
+            using (var client = SocketUtil.PrepareSocketClient(addr))
             {
                 var buf = Proto.EncodeHeader(Commands.GET_CTLADDR, 1);
                 var req = new Req();
@@ -43,39 +43,49 @@ namespace Topiik.Client
                 BinaryReader br = new BinaryReader(new MemoryStream(buf));
 
                 var header = ReceiveHeader(client);
-                var result = ReceiveData(client, header.len);
+                var result = ReceiveBody(client, header.len);
 
                 return BitConverter.ToString(result);
             }
         }
 
+        #region private
         private (int len, byte flag, byte datatye) ReceiveHeader(Socket client)
         {
             (int len, byte flag, byte datatye) header = (0, 0, 0);
-            byte[] buf = new byte[Proto.PROTO_HEADER_LEN];
-            var len = client.Receive(buf);
-            if (len != Proto.PROTO_HEADER_LEN)
-            {
-                throw new Exception("Receive header failed");
-            }
+            var buf = RecevieFixLenBytes(client, Proto.PROTO_HEADER_LEN);
             header = Proto.ParseHeader(buf);
 
             return header;
         }
 
-        private byte[] ReceiveData(Socket client, int len)
+        private byte[] ReceiveBody(Socket client, int len)
         {
-            byte[] buf = new byte[len];
-            var receivedLen = client.Receive(buf);
-            if (receivedLen != len)
-            {
-                throw new Exception("Receive data failed");
-            }
+            var buf = RecevieFixLenBytes(client, len);
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buf);
             }
             return buf;
+        }
+
+        private byte[] RecevieFixLenBytes(Socket client, int toRead)
+        {
+            var bytes = new byte[toRead];
+            int read = client.Receive(bytes);
+
+            while (read < toRead)
+            {
+                read += client.Receive(bytes, read, toRead - read, SocketFlags.None);
+            }
+
+            return bytes;
+        }
+
+        private T response<T>(Socket socket){
+            T t;
+
+            return t;
         }
 
         /*
@@ -100,7 +110,7 @@ namespace Topiik.Client
                 else
                 {
                     var header = Proto.ParseHeader(dynamicBuf);
-                    while(dynamicBuf.Length- Proto.PROTO_HEADER_LEN>= header.len)
+                    while (dynamicBuf.Length - Proto.PROTO_HEADER_LEN >= header.len)
                     {
 
                     }
@@ -121,15 +131,24 @@ namespace Topiik.Client
         }
         */
 
+        #endregion
 
-        /* Command section Begin */
+        #region String
         public string Get(string key)
         {
+            /* header */
+            var buf = Proto.EncodeHeader(Commands.SET);
+
+            /* req */
             var req = new Req { Keys = { key } };
             var data = req.Marshal();
-            var msg = Proto.Encode(data);
-            socket.Send(data);
 
+            /* header + req */
+            buf = buf.Concat(data).ToArray();
+
+            /* encode */
+            buf = Proto.Encode(data);
+            socket.Send(buf);
 
             return string.Empty;
         }
@@ -148,7 +167,9 @@ namespace Topiik.Client
         {
             throw new NotImplementedException();
         }
+        #endregion
 
+        #region List
         public long LPush(string key, string value)
         {
             throw new NotImplementedException();
@@ -173,5 +194,6 @@ namespace Topiik.Client
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

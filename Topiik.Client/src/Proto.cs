@@ -35,22 +35,22 @@ namespace Topiik.Client
              * server side is Little Endian
              * so if client side is Big Endian, reverse reposne first
             */
+            var lenBytes = buf.Take(4).ToArray();
             if (!BitConverter.IsLittleEndian)
             {
-                var tmp = buf.Take(4).ToArray();
-                Array.Reverse(tmp);
-                header.len= BitConverter.ToInt32(tmp, 0);
+                Array.Reverse(lenBytes);
+                header.len= BitConverter.ToInt32(lenBytes, 0);
             }
             else
             {
-                header.len = BitConverter.ToInt32(buf, 0);
+                header.len = BitConverter.ToInt32(lenBytes, 0);
             }
             header.flag = buf[4];
             header.datatype= buf[5];
             return header;
         }
 
-        public static byte[] EncodeHeader(byte icmd, byte ver)
+        public static byte[] EncodeHeader(byte icmd, byte ver=1)
         {
             byte[] buf = {ver, icmd };
 
@@ -62,10 +62,13 @@ namespace Topiik.Client
             // length
             var len = Convert.ToInt32(data.Length);
             byte[] buf = BitConverter.GetBytes(len);
+
+            /*
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buf);
             }
+            */
 
             return buf.Concat(data).ToArray();
         }
