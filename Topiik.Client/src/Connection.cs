@@ -40,22 +40,15 @@ namespace Topiik.Client
         {
             using (var client = SocketUtil.PrepareSocketClient(addr))
             {
-                var buf = Proto.EncodeHeader(Commands.GET_CTLADDR, 1);
-                var req = new Req();
-                var data = req.Marshal();
+                var data = Req.Build(Commands.GET_CTLADDR).Marshal();
 
-                // merge header and data(req)
-                buf = buf.Concat(data).ToArray();
-
-                // send
-                client.Send(buf);
-
-                BinaryReader br = new BinaryReader(new MemoryStream(buf));
+                client.Send(data);
 
                 var header = ReceiveHeader(client);
-                var result = ReceiveBody(client, header.len);
+                /* -2: 1 byte for flag, 1 byte for result type */
+                var result = ReceiveBody(client, header.len - 2);
 
-                return BitConverter.ToString(result);
+                return Encoding.UTF8.GetString(result);
             }
         }
 
@@ -94,10 +87,10 @@ namespace Topiik.Client
         public dynamic Receive()
         {
             var header = ReceiveHeader(socket);
-            var body = ReceiveBody(socket, header.len);
+            var body = ReceiveBody(socket, header.len - 2);
             if (header.flag == 0)
             {
-                throw new Exception("TODO");
+                throw new Exception(Encoding.UTF8.GetString(body));
             }
             if (header.datatye == Response.ResString)
             {

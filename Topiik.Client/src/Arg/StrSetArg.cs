@@ -29,5 +29,29 @@ namespace Topiik.Clien.Arg
          */
         public Nullable<bool> EX { get; set; }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if(TTL > 0)
+            {
+                sb.Append($"TTL {TTL} ");
+            }
+            if (GET)
+            {
+                sb.Append("GET ");
+            }
+            if (EX != null)
+            {
+                if (EX.Value)
+                {
+                    sb.Append("EX");
+                }
+                else
+                {
+                    sb.Append("NX");
+                }
+            }
+            return sb.ToString().Trim();
+        }
     }
 }

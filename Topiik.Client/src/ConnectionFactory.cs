@@ -18,7 +18,6 @@ namespace Topiik.Client
         {
             MaxPoolSzie = maxPoolSzie;
             IdlePoolSize = idlePoolSize;
-            ServerList = new List<string>();
             ServerList.AddRange(servers.Split(','));
             if (ServerList.Count == 0)
             {

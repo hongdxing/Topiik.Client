@@ -69,23 +69,10 @@ namespace Topiik.Client
         #region String
         public string Get(string key)
         {
-            /* header */
-            var buf = Proto.EncodeHeader(Commands.SET);
-
-            /* req */
-            var req = new Req { Keys = { Encoding.UTF8.GetBytes(key) } };
-            var data = req.Marshal();
-
-            /* header + req */
-            buf = buf.Concat(data).ToArray();
-
-            /* encode */
-            buf = Proto.Encode(data);
-            connection.Send(buf);
-
+            var data = Req.Build(Commands.GET).WithKey(key).Marshal();
+            connection.Send(data);
             var result = connection.Receive();
-
-            return string.Empty;
+            return Encoding.UTF8.GetString(result);
         }
 
         public List<string> GetM(List<string> keys)
@@ -95,7 +82,16 @@ namespace Topiik.Client
 
         public string Set(string key, string value, StrSetArg args)
         {
-            throw new NotImplementedException();
+            /* build data */
+            var data = Req.Build(Commands.SET).WithKey(key).WithVal(value).WithArgs(args).Marshal();
+
+            /* send */
+            connection.Send(data);
+
+            /* get result */
+            var result = connection.Receive();
+
+            return result;
         }
 
         public string SetM(List<string> keys, List<string> values)
