@@ -105,12 +105,12 @@ namespace Topiik.Client
         #endregion
 
         #region List
-        public long LPush(string key, string value)
+        public long LPush(string key, List<string> values)
         {
             throw new NotImplementedException();
         }
 
-        public long LPushR(string key, string value)
+        public long LPushR(string key, List<string> values)
         {
             throw new NotImplementedException();
         }

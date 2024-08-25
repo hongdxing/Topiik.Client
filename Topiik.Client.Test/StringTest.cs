@@ -57,5 +57,22 @@ namespace Topiik.Client.Test
             Assert.That(list[1], Is.EqualTo("mv1"));
             Assert.That(list[2], Is.EqualTo("mv3"));
         }
+
+        /*
+         * SET will overwrite any existing key even the existing key type is not String type
+         */
+        [Test]
+        public void SET_Can_Overwrite_Existing_List_Key()
+        {
+            /* LPUSH fruits apple orange banana */
+
+            /* Assert LPUSH succeed */
+
+            /* SET fruits abc */
+
+            /* GET fruits */
+
+            /* Assert result ecquals to abc */
+        }
     }
 }

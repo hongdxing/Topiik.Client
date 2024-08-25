@@ -12,21 +12,21 @@ namespace Topiik.Client.Interface
          * Push value to list header(Left)
          * Parameters:
          *  - key: the key of list
-         *  - value: the value
+         *  - values: the values
          * Return:
          *  - lenght of list after push
          */
-        long LPush(string key, string value);
+        long LPush(string key, List<string> values);
 
         /*
          * Push value to list tail(Right)
          * Parameters:
          *  - key: the key of list
-         *  - value: the value
+         *  - values: the values
          * Return:
          *  - length of list after push
          */
-        long LPushR(string key, string value);
+        long LPushR(string key, List<string> values);
 
         /*
          * Pop value(s) from header(Left)
