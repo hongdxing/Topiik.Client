@@ -72,12 +72,14 @@ namespace Topiik.Client
             var data = Req.Build(Commands.GET).WithKey(key).Marshal();
             connection.Send(data);
             var result = connection.Receive();
-            return Encoding.UTF8.GetString(result);
+            return result;
         }
 
         public List<string> GetM(List<string> keys)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.GETM).WithKeys(keys).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public string Set(string key, string value, StrSetArg args)
@@ -96,7 +98,9 @@ namespace Topiik.Client
 
         public string SetM(List<string> keys, List<string> values)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.SETM).WithKeys(keys).WithVals(values).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
         #endregion
 

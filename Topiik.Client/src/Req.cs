@@ -35,10 +35,27 @@ namespace Topiik.Client
             this.Keys.Add(Encoding.UTF8.GetBytes(key));
             return this;
         }
+        public Req WithKeys(List<string> keys)
+        {
+            foreach (var key in keys)
+            {
+                this.Keys.Add(Encoding.UTF8.GetBytes(key));
+            }
+            return this;
+        }
 
         public Req WithVal(string val)
         {
             this.Vals.Add(Encoding.UTF8.GetBytes(val));
+            return this;
+        }
+
+        public Req WithVals(List<string> vals)
+        {
+            foreach (var val in vals)
+            {
+                this.Vals.Add(Encoding.UTF8.GetBytes(val));
+            }
             return this;
         }
 

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Topiik.Client.src;
 
 namespace Topiik.Client
 {
-    public class Connection: IConnection
+    public class Connection : IConnection
     {
         public Socket socket { get; private set; }
         public Connection(List<string> ctlAddrs)
@@ -27,7 +29,7 @@ namespace Topiik.Client
                     continue;
                 }
             }
-            
+
         }
 
         public int Send(byte[] data)
@@ -99,7 +101,8 @@ namespace Topiik.Client
             }
             else if (header.datatye == Response.ResStringArray)
             {
-                return new List<string>();
+                var rslt = JsonSerializer.Deserialize<List<String>>(body);
+                return rslt == null ? new List<string>() : rslt;
             }
             else if (header.datatye == Response.ResIneger)
             {
