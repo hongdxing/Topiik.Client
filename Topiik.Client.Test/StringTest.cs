@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Topiik.Client.Interface;
 
-namespace Topiik.Client.test
+namespace Topiik.Client.Test
 {
-    public class GetControllerLeaderAddrTest
+    public class StringTest
     {
-
         private string serverAddr;
         private ITopiikClient topiikClient;
         private IConnectionFactory connectionFactory;
@@ -22,17 +22,12 @@ namespace Topiik.Client.test
             topiikClient = new TopiikClient(connectionFactory);
         }
 
-
         [Test]
-        public void GetControllerLeaderAddr_Should_Not_Empty()
+        public void GET_Should_Return_Value()
         {
-            /*
-            var addr = topiikClient.GetControllerLeaderAddr(serverAddr);
-            topiikClient.
-            Console.WriteLine(addr);
-            Assert.That(addr, Is.Not.Null);
-            Assert.That(addr, Is.Not.Empty);
-            */
+            var value = ((IStringCommand)topiikClient).Get("k1");
+
+            Assert.That(value, Is.EqualTo("v1"));
         }
     }
 }
