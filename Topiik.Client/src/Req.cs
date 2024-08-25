@@ -12,8 +12,8 @@ namespace Topiik.Client
 {
     internal class Req
     {
-        public List<string> Keys { get; set; } = [];
-        public List<string> Vals { get; set; } = [];
+        public List<byte[]> Keys { get; set; } = [];
+        public List<byte[]> Vals { get; set; } = [];
         public string Args { get; set; } = string.Empty;
 
         public byte[] Marshal()

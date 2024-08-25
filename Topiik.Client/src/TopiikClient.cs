@@ -1,92 +1,25 @@
 ﻿
 using System.Configuration;
 using System.Net.Sockets;
+using System.Text;
+using Topiik.Clien.Arg;
+using Topiik.Client.Interface;
+using Topiik.Client.src;
 
 namespace Topiik.Client
 {
-    public class TopiikClient : ITopiikClient
+    public class TopiikClient : ITopiikClient, IStringCommand, IListCommand
     {
+        IConnectionFactory connFactory;
+        Connection connection;
 
-        List<string> ServerList { get; set; } = [];
-       
-
-        Socket socket;
-        public TopiikClient(string servers)
+        public TopiikClient(IConnectionFactory connectionFactory)
         {
-            ServerList.AddRange(servers.Split(','));
-            if (ServerList.Count == 0)
-            {
-                throw new Exception("servers cannot be empty");
-            }
-        }
-
-        public void Connect()
-        {
-            var controllerLeaderAddr = GetControllerLeaderAddr(ServerList.First());
-            Console.WriteLine(controllerLeaderAddr);
-        }
-
-        string GetControllerLeaderAddr(string addr)
-        {
-            using (var client = SocketUtil.PrepareSocketClient(addr))
-            {
-                var buf = Proto.EncodeHeader(Commands.GET_CTLADDR, 1);
-                var req = new Req();
-                var data = req.Marshal();
-
-                // merge header and data(req)
-                buf = buf.Concat(data).ToArray();
-
-                // send
-                client.Send(buf);
-
-                BinaryReader br = new BinaryReader(new MemoryStream(buf));
-
-                var header = ReceiveHeader(client);
-                var result = ReceiveBody(client, header.len);
-
-                return BitConverter.ToString(result);
-            }
+            connFactory = connectionFactory;
+            connection = connectionFactory.GetConnection();
         }
 
         #region private
-        private (int len, byte flag, byte datatye) ReceiveHeader(Socket client)
-        {
-            (int len, byte flag, byte datatye) header = (0, 0, 0);
-            var buf = RecevieFixLenBytes(client, Proto.PROTO_HEADER_LEN);
-            header = Proto.ParseHeader(buf);
-
-            return header;
-        }
-
-        private byte[] ReceiveBody(Socket client, int len)
-        {
-            var buf = RecevieFixLenBytes(client, len);
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buf);
-            }
-            return buf;
-        }
-
-        private byte[] RecevieFixLenBytes(Socket client, int toRead)
-        {
-            var bytes = new byte[toRead];
-            int read = client.Receive(bytes);
-
-            while (read < toRead)
-            {
-                read += client.Receive(bytes, read, toRead - read, SocketFlags.None);
-            }
-
-            return bytes;
-        }
-
-        private T response<T>(Socket socket){
-            T t;
-
-            return t;
-        }
 
         /*
         private void Receive(Socket socket)
@@ -140,7 +73,7 @@ namespace Topiik.Client
             var buf = Proto.EncodeHeader(Commands.SET);
 
             /* req */
-            var req = new Req { Keys = { key } };
+            var req = new Req { Keys = { Encoding.UTF8.GetBytes(key) } };
             var data = req.Marshal();
 
             /* header + req */
@@ -148,7 +81,9 @@ namespace Topiik.Client
 
             /* encode */
             buf = Proto.Encode(data);
-            socket.Send(buf);
+            connection.Send(buf);
+
+            var result = connection.Receive();
 
             return string.Empty;
         }
@@ -158,7 +93,7 @@ namespace Topiik.Client
             throw new NotImplementedException();
         }
 
-        public string Set(string key, string value, long ttl = long.MaxValue, bool get = false, bool? exist = null)
+        public string Set(string key, string value, StrSetArg args)
         {
             throw new NotImplementedException();
         }
