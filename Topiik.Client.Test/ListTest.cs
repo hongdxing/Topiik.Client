@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Topiik.Client.Interface;
 
 namespace Topiik.Client.Test
 {
     [TestFixture]
-    public class StringTest
+    public class ListTest
     {
         private string serverAddr;
         private ITopiikClient topiikClient;
@@ -21,17 +20,6 @@ namespace Topiik.Client.Test
             serverAddr = "localhost:8301";
             connectionFactory = new ConnectionFactory(serverAddr);
             topiikClient = new TopiikClient(connectionFactory);
-        }
-
-        [Test]
-        public void GET_Should_Return_Value()
-        {
-            var client = (IStringCommand)topiikClient;
-            client.Set("k1", "v1", new Clien.Arg.StrSetArg());
-
-            var value = client.Get("k1");
-
-            Assert.That(value, Is.EqualTo("v1"));
         }
     }
 }
