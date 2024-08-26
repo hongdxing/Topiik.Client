@@ -106,8 +106,8 @@ namespace Topiik.Client
             }
             else if (header.datatye == Response.ResIneger)
             {
-                BitConverter.ToInt64(body);
-                return 0;
+                var rslt = BitConverter.ToInt64(body);
+                return rslt;
             }
             else
             {

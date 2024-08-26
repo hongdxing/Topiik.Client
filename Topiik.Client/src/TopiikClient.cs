@@ -3,12 +3,13 @@ using System.Configuration;
 using System.Net.Sockets;
 using System.Text;
 using Topiik.Clien.Arg;
+using Topiik.Client.Arg;
 using Topiik.Client.Interface;
 using Topiik.Client.src;
 
 namespace Topiik.Client
 {
-    public class TopiikClient : ITopiikClient, IStringCommand, IListCommand
+    public class TopiikClient : ITopiikClient
     {
         IConnectionFactory connFactory;
         Connection connection;
@@ -82,7 +83,7 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-        public string Set(string key, string value, StrSetArg args)
+        public string Set(string key, string value, StrSetArg? args)
         {
             /* build data */
             var data = Req.Build(Commands.SET).WithKey(key).WithVal(value).WithArgs(args).Marshal();
@@ -107,25 +108,42 @@ namespace Topiik.Client
         #region List
         public long LPush(string key, List<string> values)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.LPUSH).WithKey(key).WithVals(values).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public long LPushR(string key, List<string> values)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.LPUSHR).WithKey(key).WithVals(values).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public List<string> LPop(string key, int count)
         {
-            throw new NotImplementedException();
+            var args = new ListPopArg { Count = count };
+            var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public List<string> LPopR(string key, int count)
         {
-            throw new NotImplementedException();
+            var args = new ListPopArg { Count = count };
+            var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
-        public long Llen(string key)
+        public long LLen(string key)
+        {
+            var data = Req.Build(Commands.LLEN).WithKey(key).Marshal();
+            connection.Send(data);
+            return connection.Receive();
+        }
+
+        public List<string> LRange(string key, int start, int end)
         {
             throw new NotImplementedException();
         }

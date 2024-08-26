@@ -59,17 +59,19 @@ namespace Topiik.Client
             return this;
         }
 
-        public Req WithArgs(object args)
+        public Req WithArgs(object? args)
         {
             if (args == null)
             {
                 return this;
             }
             string? sArg = string.Empty;
-            if (args.GetType() == typeof(StrSetArg))
+            
+            /*if (args.GetType() == typeof(StrSetArg))
             {
                 sArg = args.ToString();
-            }
+            }*/
+            sArg = args.ToString();
             this.Args = sArg == null ? string.Empty : sArg;
             return this;
         }

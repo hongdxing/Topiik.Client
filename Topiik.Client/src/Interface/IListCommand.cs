@@ -54,6 +54,18 @@ namespace Topiik.Client.Interface
          * Return:
          *  - length of list
          */
-        long Llen(string key);
+        long LLen(string key);
+
+        /*
+         * Return list of elements in list from start to end(exclusive)
+         * no change to the list after command executed
+         * Parameters:
+         *  - key: the key of list
+         *  - start: start position
+         *  - end: end position
+         * Return:
+         *  - list of elements in list from start to end(exclusive)
+         */
+        List<string> LRange(string key, int start, int end);
     }
 }

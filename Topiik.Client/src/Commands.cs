@@ -11,10 +11,19 @@ namespace Topiik.Client
 
         public const byte GET_CTLADDR = 15;
 
+        /* String */
         public const byte SET = 16;
         public const byte GET = 17;
         public const byte SETM = 18;
         public const byte GETM = 19;
         public const byte INCR = 20;
+
+        /* List */
+        public const byte LPUSH = 32;
+        public const byte LPOP = 33;
+        public const byte LPUSHR = 34;
+        public const byte LPOPR = 35;
+        public const byte LLEN = 36;
+        public const byte LRANGE = 37;
     }
 }
