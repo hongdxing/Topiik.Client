@@ -13,5 +13,6 @@ namespace Topiik.Client.Interface
         string Get(string key);
         string SetM(List<string> keys, List<string> values);
         List<string> GetM(List<String> keys);
+        long Incr(string key, long step=1);
     }
 }

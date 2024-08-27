@@ -25,5 +25,11 @@ namespace Topiik.Client
         public const byte LPOPR = 35;
         public const byte LLEN = 36;
         public const byte LRANGE = 37;
+
+        /* Key */
+        public const byte TTL = 128;
+        public const byte DEL = 129;
+        public const byte KEYS = 130;
+        public const byte EXISTS = 131;
     }
 }

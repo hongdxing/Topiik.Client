@@ -39,11 +39,73 @@ namespace Topiik.Client.Test
         [Test]
         public void LPOP_Should_Return_Value()
         {
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BalckBerry" });
+            client.Del("fruits");
+            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
 
             var len = client.LLen("fruits");
-
             Assert.That(len, Is.EqualTo(3));
+
+            var rslt = client.LPop("fruits");
+            Assert.That(rslt, Is.Not.Null);
+            Assert.That(rslt, Is.Not.Empty);
+            Assert.That(rslt.Count, Is.EqualTo(1));
+            Assert.That(rslt[0], Is.EqualTo("BlackBerry"));
+        }
+
+        [Test]
+        public void LRange_Start0_EndN_Should_Return_All_Elements()
+        {
+            var N = 3;
+            client.Del("fruits");
+            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+
+            var fruits = client.LRange("fruits", 0, 3);
+
+            Assert.That(fruits, Is.Not.Null);
+            Assert.That(fruits, Is.Not.Empty);
+            Assert.That(fruits.Count, Is.EqualTo(N));
+        }
+
+        [Test]
+        public void LRange_Start_On_Right_Of_End_Should_Return_Zero_Element()
+        {
+            client.Del("fruits");
+            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+
+            var fruits = client.LRange("fruits", 2, 1);
+
+            Assert.That(fruits.Count, Is.EqualTo(0));
+
+            fruits = client.LRange("fruits", -1, -2);
+
+            Assert.That(fruits.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void LRange_End_Minus_One_Equivalent_To_End_N()
+        {
+            var N = 3;
+            client.Del("fruits");
+            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+
+            var fruits = client.LRange("fruits", 0, -1);
+            Assert.That(fruits, Is.Not.Null);
+            Assert.That(fruits, Is.Not.Empty);
+            Assert.That(fruits.Count, Is.EqualTo(N));
+        }
+
+        [Test]
+        public void LRange_End_Bigger_Than_N_Equivalent_To_End_N()
+        {
+            var N = 3;
+            client.Del("fruits");
+            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+
+            var fruits = client.LRange("fruits", 0, N + new Random().Next());
+
+            Assert.That(fruits, Is.Not.Null);
+            Assert.That(fruits, Is.Not.Empty);
+            Assert.That(fruits.Count, Is.EqualTo(N));
         }
     }
 }

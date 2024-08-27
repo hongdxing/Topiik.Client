@@ -36,7 +36,7 @@ namespace Topiik.Client.Interface
          * Return:
          *  - list of values
          */
-        List<string> LPop(string key, int count);
+        List<string> LPop(string key, int count=1);
 
         /* Pop value(s) from list tail(Right)
          * Parameters:
@@ -45,7 +45,7 @@ namespace Topiik.Client.Interface
          * Return:
          *  - list of values
          */
-        List<string> LPopR(string key, int count);
+        List<string> LPopR(string key, int count=1);
 
         /*
          * Get length of list

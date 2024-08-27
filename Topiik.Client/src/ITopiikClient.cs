@@ -9,7 +9,7 @@ using Topiik.Client.Interface;
 
 namespace Topiik.Client
 {
-    public interface ITopiikClient: IStringCommand, IListCommand
+    public interface ITopiikClient : IKeyCommand, IListCommand, IStringCommand
     {
 
 

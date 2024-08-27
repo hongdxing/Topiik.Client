@@ -6,6 +6,7 @@ using Topiik.Clien.Arg;
 using Topiik.Client.Arg;
 using Topiik.Client.Interface;
 using Topiik.Client.src;
+using Topiik.Client.src.Arg;
 
 namespace Topiik.Client
 {
@@ -67,7 +68,36 @@ namespace Topiik.Client
 
         #endregion
 
-        #region String
+        #region IKeyCommand
+        public long Del(params string[] keys)
+        {
+            var data = Req.Build(Commands.DEL).WithKeys(keys.ToList()).Marshal();
+            connection.Send(data);
+            return connection.Receive();
+        }
+
+        public long Exists(params string[] keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long Ttl(string key, long seconds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long Ttl(string key, TtlArg args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long Incr(string key, long step = 1)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region IStringCommand
         public string Get(string key)
         {
             var data = Req.Build(Commands.GET).WithKey(key).Marshal();
@@ -105,7 +135,7 @@ namespace Topiik.Client
         }
         #endregion
 
-        #region List
+        #region IListCommand
         public long LPush(string key, List<string> values)
         {
             var data = Req.Build(Commands.LPUSH).WithKey(key).WithVals(values).Marshal();
@@ -120,7 +150,7 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-        public List<string> LPop(string key, int count)
+        public List<string> LPop(string key, int count=1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
@@ -128,7 +158,7 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-        public List<string> LPopR(string key, int count)
+        public List<string> LPopR(string key, int count=1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();
@@ -145,7 +175,10 @@ namespace Topiik.Client
 
         public List<string> LRange(string key, int start, int end)
         {
-            throw new NotImplementedException();
+            var args = new ListRangeArg { Start = start, End = end };
+            var data = Req.Build(Commands.LRANGE).WithKey(key).WithArgs(args).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
         #endregion
     }
