@@ -9,10 +9,10 @@ namespace Topiik.Client.Interface
 {
     public interface IStringCommand
     {
-        string Set(string key, string value, StrSetArg? args=null);
+        string Set(string key, string value, StrSetArg? args = null);
         string Get(string key);
-        string SetM(List<string> keys, List<string> values);
-        List<string> GetM(List<String> keys);
-        long Incr(string key, long step=1);
+        string SetM(Dictionary<string, string> keyValues);
+        List<string> GetM(params string[] keys);
+        long Incr(string key, long step = 1);
     }
 }

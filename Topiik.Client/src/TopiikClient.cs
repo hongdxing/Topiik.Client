@@ -71,24 +71,50 @@ namespace Topiik.Client
         #region IKeyCommand
         public long Del(params string[] keys)
         {
-            var data = Req.Build(Commands.DEL).WithKeys(keys.ToList()).Marshal();
+            var data = Req.Build(Commands.DEL).WithKeys(keys).Marshal();
             connection.Send(data);
             return connection.Receive();
         }
 
+        public bool Exists(string key)
+        {
+            var data = Req.Build(Commands.EXISTS).WithKey(key).Marshal();
+            connection.Send(data);
+            long result = connection.Receive();
+            if (result > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public long Exists(params string[] keys)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.EXISTS).WithKeys(keys).Marshal();
+            connection.Send(data);
+            return connection.Receive();
+        }
+
+        public long Ttl(string key)
+        {
+            var data = Req.Build(Commands.TTL).WithKey(key).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public long Ttl(string key, long seconds)
         {
-            throw new NotImplementedException();
+            var args = new TtlArg { Seconds = seconds };
+            var data = Req.Build(Commands.TTL).WithKey(key).WithArgs(args).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public long Ttl(string key, TtlArg args)
         {
-            throw new NotImplementedException();
+            var data = Req.Build(Commands.DEL).WithKey(key).WithArgs(args).Marshal();
+            connection.Send(data);
+            return connection.Receive();
         }
 
         public long Incr(string key, long step = 1)
@@ -106,7 +132,7 @@ namespace Topiik.Client
             return result;
         }
 
-        public List<string> GetM(List<string> keys)
+        public List<string> GetM(params string[] keys)
         {
             var data = Req.Build(Commands.GETM).WithKeys(keys).Marshal();
             connection.Send(data);
@@ -127,30 +153,31 @@ namespace Topiik.Client
             return result;
         }
 
-        public string SetM(List<string> keys, List<string> values)
+        public string SetM(Dictionary<string, string> keyValues)
         {
-            var data = Req.Build(Commands.SETM).WithKeys(keys).WithVals(values).Marshal();
+            var data = Req.Build(Commands.SETM).WithKeys(keyValues.Keys.ToArray())
+                .WithVals(keyValues.Values.ToArray()).Marshal();
             connection.Send(data);
             return connection.Receive();
         }
         #endregion
 
         #region IListCommand
-        public long LPush(string key, List<string> values)
+        public long LPush(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSH).WithKey(key).WithVals(values).Marshal();
             connection.Send(data);
             return connection.Receive();
         }
 
-        public long LPushR(string key, List<string> values)
+        public long LPushR(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSHR).WithKey(key).WithVals(values).Marshal();
             connection.Send(data);
             return connection.Receive();
         }
 
-        public List<string> LPop(string key, int count=1)
+        public List<string> LPop(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
@@ -158,7 +185,7 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-        public List<string> LPopR(string key, int count=1)
+        public List<string> LPopR(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();

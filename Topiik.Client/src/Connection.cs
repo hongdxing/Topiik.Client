@@ -109,6 +109,11 @@ namespace Topiik.Client
                 var rslt = BitConverter.ToInt64(body);
                 return rslt;
             }
+            else if (header.datatye == Response.ResIntegerArray)
+            {
+                var rslt = JsonSerializer.Deserialize<List<long>>(body);
+                return rslt == null ? new List<long>() : rslt;
+            }
             else
             {
                 return "";

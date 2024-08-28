@@ -21,5 +21,57 @@ namespace Topiik.Client.Test
             connectionFactory = new ConnectionFactory(serverAddr);
             client = new TopiikClient(connectionFactory);
         }
+
+        [Test]
+        public void Exists_Should_Return_True_If_Key_Exists()
+        {
+            client.Del("existKey");
+            client.Del("existList");
+            client.Set("existKey", "Topiik");
+            client.LPush("existList", new string[] { "Banana", "Apple", "Orange" });
+
+            var isExist = client.Exists("existKey");
+            Assert.That(isExist, Is.True);
+
+            isExist = client.Exists("existList");
+            Assert.That(isExist,Is.True);
+        }
+
+        [Test]
+        public void Exists_Should_Return_N_If_N_Keys_Exists()
+        {
+            int N = 2;
+            client.Del("existKey");
+            client.Del("existList");
+            client.Set("existKey", "Topiik");
+            client.LPush("existList", new string[] { "Banana", "Apple", "Orange" });
+
+            var count = client.Exists("existKey", "existList");
+            Assert.That(count, Is.EqualTo(N));
+        }
+
+        [Test]
+        public void Exists_Should_Return_Actual_N_If_Some_Keys_Not_Exists()
+        {
+            int N = 2;
+            client.Del("existKey");
+            client.Del("existList");
+            client.Del("NonExistKey");
+            client.Set("existKey", "Topiik");
+            client.LPush("existList", new string[] { "Banana", "Apple", "Orange" });
+
+            var count = client.Exists("existKey", "existList", "NonExistKey");
+            Assert.That(count, Is.EqualTo(N));
+        }
+
+        [Test]
+        public void Ttl_Not_Exist_Key_Should_Return_Minus_Two()
+        {
+            client.Del("NonExistKey");
+
+            var result = client.Ttl("NonExistKey");
+            Assert.That(result, Is.EqualTo(-2));
+        }
+
     }
 }

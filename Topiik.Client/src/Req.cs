@@ -35,7 +35,7 @@ namespace Topiik.Client
             this.Keys.Add(Encoding.UTF8.GetBytes(key));
             return this;
         }
-        public Req WithKeys(List<string> keys)
+        public Req WithKeys(params string[] keys)
         {
             foreach (var key in keys)
             {
@@ -50,7 +50,7 @@ namespace Topiik.Client
             return this;
         }
 
-        public Req WithVals(List<string> vals)
+        public Req WithVals(params string[] vals)
         {
             foreach (var val in vals)
             {

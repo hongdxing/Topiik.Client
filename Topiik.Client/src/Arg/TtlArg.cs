@@ -10,5 +10,18 @@ namespace Topiik.Client.Arg
     {
         public long Seconds { get; set; }
         public bool At { get; set; }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{Seconds} ");
+
+            if (At)
+            {
+                sb.Append("AT");
+            }
+
+            return sb.ToString().Trim();
+        }
     }
 }

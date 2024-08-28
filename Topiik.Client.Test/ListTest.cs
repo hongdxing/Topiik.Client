@@ -31,7 +31,7 @@ namespace Topiik.Client.Test
             Assert.That(value, Is.EqualTo("v1"));
 
             //Assert.That(client.LPush("k1", new List<string> { "v1", "v2" }), Throws.Exception);
-            var msg = Assert.Throws<Exception>(() => client.LPush("k1", new List<string> { "v1", "v2" }))?.Message;
+            var msg = Assert.Throws<Exception>(() => client.LPush("k1", new string[] { "v1", "v2" }))?.Message;
 
             Assert.That(msg, Is.EqualTo("DT_MISMATCH"));
         }
@@ -40,7 +40,7 @@ namespace Topiik.Client.Test
         public void LPOP_Should_Return_Value()
         {
             client.Del("fruits");
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+            client.LPush("fruits", new string[] { "Banana", "Apple", "BlackBerry" });
 
             var len = client.LLen("fruits");
             Assert.That(len, Is.EqualTo(3));
@@ -57,7 +57,7 @@ namespace Topiik.Client.Test
         {
             var N = 3;
             client.Del("fruits");
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+            client.LPush("fruits", new string[] { "Banana", "Apple", "BlackBerry" });
 
             var fruits = client.LRange("fruits", 0, 3);
 
@@ -70,7 +70,7 @@ namespace Topiik.Client.Test
         public void LRange_Start_On_Right_Of_End_Should_Return_Zero_Element()
         {
             client.Del("fruits");
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+            client.LPush("fruits", new string[] { "Banana", "Apple", "BlackBerry" });
 
             var fruits = client.LRange("fruits", 2, 1);
 
@@ -86,7 +86,7 @@ namespace Topiik.Client.Test
         {
             var N = 3;
             client.Del("fruits");
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+            client.LPush("fruits", new string[] { "Banana", "Apple", "BlackBerry" });
 
             var fruits = client.LRange("fruits", 0, -1);
             Assert.That(fruits, Is.Not.Null);
@@ -99,7 +99,7 @@ namespace Topiik.Client.Test
         {
             var N = 3;
             client.Del("fruits");
-            client.LPush("fruits", new List<string> { "Banana", "Apple", "BlackBerry" });
+            client.LPush("fruits", new string[] { "Banana", "Apple", "BlackBerry" });
 
             var fruits = client.LRange("fruits", 0, N + new Random().Next());
 

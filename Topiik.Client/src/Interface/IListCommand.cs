@@ -16,7 +16,7 @@ namespace Topiik.Client.Interface
          * Return:
          *  - lenght of list after push
          */
-        long LPush(string key, List<string> values);
+        long LPush(string key, params string[] values);
 
         /*
          * Push value to list tail(Right)
@@ -26,7 +26,7 @@ namespace Topiik.Client.Interface
          * Return:
          *  - length of list after push
          */
-        long LPushR(string key, List<string> values);
+        long LPushR(string key, params string[] values);
 
         /*
          * Pop value(s) from header(Left)
