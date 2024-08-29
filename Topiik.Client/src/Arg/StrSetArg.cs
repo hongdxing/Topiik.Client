@@ -13,7 +13,7 @@ namespace Topiik.Clien.Arg
          * default value is int64 max, means live forever
          * 
          */
-        public long TTL { get; set; } = long.MaxValue;
+        public long TTL { get; set; } = 0;
 
         /*
          * if true then return value before set
@@ -32,7 +32,7 @@ namespace Topiik.Clien.Arg
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            if(TTL > 0)
+            if (TTL > 0)
             {
                 sb.Append($"TTL {TTL} ");
             }

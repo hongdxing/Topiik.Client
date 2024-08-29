@@ -65,12 +65,24 @@ namespace Topiik.Client.Test
         }
 
         [Test]
-        public void Ttl_Not_Exist_Key_Should_Return_Minus_Two()
+        public void Ttl_Should_Return_Minus_Two_If_Key_Not_Exist()
         {
             client.Del("NonExistKey");
 
             var result = client.Ttl("NonExistKey");
             Assert.That(result, Is.EqualTo(-2));
+        }
+
+        [Test]
+        public void Ttl_Should_Return_Minus_One_If_Ttl_Not_Set()
+        {
+            client.Set("user:00001", "Tom");
+            client.LPush("cities", "Singapore", "Shanghai");
+
+            var result = client.Ttl("user:00001");
+            Assert.That(result, Is.EqualTo(-1));
+            result = client.Ttl("cities");
+            Assert.That(result, Is.EqualTo(-1));
         }
 
     }
