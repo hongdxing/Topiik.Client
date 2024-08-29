@@ -12,7 +12,7 @@ namespace Topiik.Client.Test
     public class StringTest
     {
         private string serverAddr;
-        private ITopiikClient topiikClient;
+        private ITopiikClient client;
         private IConnectionFactory connectionFactory;
 
         [SetUp]
@@ -20,13 +20,12 @@ namespace Topiik.Client.Test
         {
             serverAddr = "localhost:8301";
             connectionFactory = new ConnectionFactory(serverAddr);
-            topiikClient = new TopiikClient(connectionFactory);
+            client = new TopiikClient(connectionFactory);
         }
 
         [Test]
         public void GET_Should_Return_Value()
         {
-            var client = (IStringCommand)topiikClient;
             client.Set("k1", "v1", new Clien.Arg.StrSetArg());
 
             var value = client.Get("k1");
@@ -37,7 +36,6 @@ namespace Topiik.Client.Test
         [Test]
         public void GETM_Should_Return_Value()
         {
-            var client = (IStringCommand)topiikClient;
             var keyValues = new Dictionary<string, string>
             {
                 { "mk1", "mv1"},
@@ -78,6 +76,25 @@ namespace Topiik.Client.Test
             /* GET fruits */
 
             /* Assert result ecquals to abc */
+        }
+
+        [Test]
+        public void INCR_Should_Able_To_Increase_Non_Exists_Key()
+        {
+            client.Del("NonExistsKey");
+
+            var result = client.Incr("NonExistsKey");
+            Assert.That(result, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void INCR_Should_Throw_DT_MISMATCH_If_Existing_Key_Value_Cannot_Convert_To_Integer()
+        {
+            var result = client.Set("user:00001", "Tom");
+            Assert.That(result, Is.EqualTo("OK"));
+
+            var message = Assert.Throws<Exception>(() => client.Incr("user:00001"), "")?.Message;
+            Assert.That(message, Is.EqualTo(Consts.ERR_DT_MISMATCH));
         }
     }
 }

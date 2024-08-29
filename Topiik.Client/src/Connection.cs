@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Topiik.Client.src;
 
 namespace Topiik.Client
 {
     public class Connection : IConnection
     {
-        public Socket socket { get; private set; }
+        private Socket socket;
         public Connection(List<string> ctlAddrs)
         {
             foreach (var addr in ctlAddrs)
@@ -88,8 +82,14 @@ namespace Topiik.Client
 
         public dynamic Receive()
         {
-            var header = ReceiveHeader(socket);
-            var body = ReceiveBody(socket, header.len - 2);
+            (int len, byte flag, byte datatye) header = (0, 0, 0);
+            byte[] body = { };
+            try
+            {
+                header = ReceiveHeader(socket);
+                body = ReceiveBody(socket, header.len - 2);
+            }
+            catch (Exception) { }
             if (header.flag == 0)
             {
                 throw new Exception(Encoding.UTF8.GetString(body));
@@ -120,6 +120,49 @@ namespace Topiik.Client
             }
 
         }
+
+        public dynamic Execute(byte[] data)
+        {
+            (int len, byte flag, byte datatye) header = (0, 0, 0);
+            byte[] body = { };
+            // TODO: retry
+            try
+            {
+                socket.Send(data);
+                header = ReceiveHeader(socket);
+                body = ReceiveBody(socket, header.len - 2);
+            }
+            catch (Exception) { }
+            if (header.flag == 0)
+            {
+                throw new Exception(Encoding.UTF8.GetString(body));
+            }
+            if (header.datatye == Response.ResString)
+            {
+                var rslt = Encoding.UTF8.GetString(body);
+                return rslt;
+            }
+            else if (header.datatye == Response.ResStringArray)
+            {
+                var rslt = JsonSerializer.Deserialize<List<String>>(body);
+                return rslt == null ? new List<string>() : rslt;
+            }
+            else if (header.datatye == Response.ResIneger)
+            {
+                var rslt = BitConverter.ToInt64(body);
+                return rslt;
+            }
+            else if (header.datatye == Response.ResIntegerArray)
+            {
+                var rslt = JsonSerializer.Deserialize<List<long>>(body);
+                return rslt == null ? new List<long>() : rslt;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         #endregion
     }
 }

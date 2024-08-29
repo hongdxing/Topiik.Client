@@ -12,7 +12,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Topiik.Client
 {
-    internal class Req
+    public class Req
     {
         private byte[] m_header;
         public List<byte[]> Keys { get; set; } = [];

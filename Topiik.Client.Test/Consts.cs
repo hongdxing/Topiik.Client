@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Topiik.Client
+namespace Topiik.Client.Test
 {
-    public interface IConnection
+    internal class Consts
     {
-        int Send(byte[] data);
-
-        dynamic Execute(byte[]data);
+        public const string ERR_DT_MISMATCH = "DT_MISMATCH";
     }
 }

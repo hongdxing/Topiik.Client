@@ -117,10 +117,6 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-        public long Incr(string key, long step = 1)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region IStringCommand
@@ -135,6 +131,13 @@ namespace Topiik.Client
         public List<string> GetM(params string[] keys)
         {
             var data = Req.Build(Commands.GETM).WithKeys(keys).Marshal();
+            connection.Send(data);
+            return connection.Receive();
+        }
+
+        public long Incr(string key, long step = 1)
+        {
+            var data = Req.Build(Commands.INCR).WithKey(key).Marshal();
             connection.Send(data);
             return connection.Receive();
         }
