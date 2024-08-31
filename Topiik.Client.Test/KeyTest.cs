@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Topiik.Client.Test
@@ -34,7 +35,7 @@ namespace Topiik.Client.Test
             Assert.That(isExist, Is.True);
 
             isExist = client.Exists("existList");
-            Assert.That(isExist,Is.True);
+            Assert.That(isExist, Is.True);
         }
 
         [Test]
@@ -83,6 +84,20 @@ namespace Topiik.Client.Test
             Assert.That(result, Is.EqualTo(-1));
             result = client.Ttl("cities");
             Assert.That(result, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void Ttl_Should_Return_Minus_Two_If_Expired_And_Key_Should_Be_Deleted()
+        {
+            client.Set("user:00001", "Tom");
+            client.Ttl("user:00001", 1);
+            var value = client.Get("user:00001");
+            Assert.That(value, Is.EqualTo("Tom"));
+            //Thread.Sleep(1500);
+
+            Assert.That(() => client.Ttl(Consts.KEY_USER_00001), Is.EqualTo(-2).After(1000));
+
+            Assert.That(() => client.Get("user:00001"), Is.EqualTo(Consts.RES_NIL).After(1000));
         }
 
         [OneTimeTearDown]
