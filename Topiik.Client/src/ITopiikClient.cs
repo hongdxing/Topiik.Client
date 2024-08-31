@@ -9,9 +9,8 @@ using Topiik.Client.Interface;
 
 namespace Topiik.Client
 {
-    public interface ITopiikClient : IKeyCommand, IListCommand, IStringCommand
+    public interface ITopiikClient : IKeyCommand, IListCommand, IStringCommand, IDisposable
     {
-
-
+        void Close();
     }
 }

@@ -13,7 +13,7 @@ namespace Topiik.Client
     public class TopiikClient : ITopiikClient
     {
         IConnectionFactory connFactory;
-        Connection connection;
+        IConnection connection;
 
         public TopiikClient(IConnectionFactory connectionFactory)
         {
@@ -210,6 +210,35 @@ namespace Topiik.Client
             connection.Send(data);
             return connection.Receive();
         }
+
+
         #endregion
+
+        public void Dispose()
+        {
+            Close();
+        }
+
+        public void Close()
+        {
+            try
+            {
+                if (connection != null)
+                {
+                    if (connection.InUse)
+                    {
+                        connection.InUse = false;
+                    }
+                    else
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 }

@@ -11,10 +11,10 @@ namespace Topiik.Client
         private List<Connection> pool = new List<Connection>();
 
         public List<string> ServerList { get; private set; } = [];
-        public int MaxPoolSzie { get; private set; } = 50;
-        public int IdlePoolSize { get; private set; } = 5;
+        public int MaxPoolSzie { get; private set; }
+        public int IdlePoolSize { get; private set; }
 
-        public ConnectionFactory(string servers, int maxPoolSzie=50, int idlePoolSize=5)
+        public ConnectionFactory(string servers, int maxPoolSzie=15, int idlePoolSize=5)
         {
             MaxPoolSzie = maxPoolSzie;
             IdlePoolSize = idlePoolSize;
@@ -27,20 +27,24 @@ namespace Topiik.Client
 
         public Connection GetConnection()
         {
-            Connection conn;
+            Connection? conn;
             lock (pool)
             {
-                if (pool.Count > 0)
-                {
-                    conn = pool.First();
-                }
-                else
+                conn = pool.Where(x => !x.InUse).FirstOrDefault();
+                if (conn == null)
                 {
                     conn = new Connection(ServerList);
                     if (pool.Count < MaxPoolSzie)
                     {
+                        Console.WriteLine($"Pool size {pool.Count}");
+                        conn.InUse = true;
                         pool.Add(conn);
                     }
+                }
+                else
+                {
+                    Console.WriteLine("Get connection from pool");
+                    conn.InUse = true;
                 }
             }
             return conn;

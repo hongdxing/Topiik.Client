@@ -7,6 +7,9 @@ namespace Topiik.Client
     public class Connection : IConnection
     {
         private Socket socket;
+
+        public bool InUse { get; set; }
+
         public Connection(List<string> ctlAddrs)
         {
             foreach (var addr in ctlAddrs)
@@ -160,6 +163,14 @@ namespace Topiik.Client
             else
             {
                 return "";
+            }
+        }
+
+        public void Close()
+        {
+            if(socket != null)
+            {
+                socket.Close();
             }
         }
 

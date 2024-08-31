@@ -15,7 +15,7 @@ namespace Topiik.Client.Test
         private ITopiikClient client;
         private IConnectionFactory connectionFactory;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             serverAddr = "localhost:8301";
@@ -95,6 +95,12 @@ namespace Topiik.Client.Test
 
             var message = Assert.Throws<Exception>(() => client.Incr("user:00001"), "")?.Message;
             Assert.That(message, Is.EqualTo(Consts.ERR_DT_MISMATCH));
+        }
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            client.Close();
         }
     }
 }

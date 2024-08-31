@@ -15,7 +15,7 @@ namespace Topiik.Client.Test
         private ITopiikClient client;
         private IConnectionFactory connectionFactory;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             serverAddr = "localhost:8301";
@@ -106,6 +106,13 @@ namespace Topiik.Client.Test
             Assert.That(fruits, Is.Not.Null);
             Assert.That(fruits, Is.Not.Empty);
             Assert.That(fruits.Count, Is.EqualTo(N));
+        }
+
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            client.Close();
         }
     }
 }
