@@ -24,6 +24,30 @@ namespace Topiik.Client.Test
         }
 
         [Test]
+        public void LPUSH_LPOP_Should_Return_Items_In_Reverse_Order()
+        {
+            client.Del(Consts.KEY_CITIES);
+            client.LPush(Consts.KEY_CITIES, Consts.CITY_SHANGHAI, Consts.CITY_NEWYORK);
+            List<string> cities = client.LPop(Consts.KEY_CITIES, 2);
+
+            Assert.That(cities.Count, Is.EqualTo(2));
+            Assert.That(cities[0], Is.EqualTo(Consts.CITY_NEWYORK));
+            Assert.That(cities[1], Is.EqualTo(Consts.CITY_SHANGHAI));
+        }
+
+        [Test]
+        public void LPUSHR_LPOPR_Should_Return_Items_In_Reverse_Order()
+        {
+            client.Del(Consts.KEY_CITIES);
+            client.LPushR(Consts.KEY_CITIES, Consts.CITY_SHANGHAI, Consts.CITY_NEWYORK);
+            List<string> cities = client.LPopR(Consts.KEY_CITIES, 2);
+
+            Assert.That(cities.Count, Is.EqualTo(2));
+            Assert.That(cities[0], Is.EqualTo(Consts.CITY_NEWYORK));
+            Assert.That(cities[1], Is.EqualTo(Consts.CITY_SHANGHAI));
+        }
+
+        [Test]
         public void LPUSH_Existing_StringTypeKey_Should_Throw_Exception_DT_MISMATCH()
         {
             client.Set("k1", "v1");

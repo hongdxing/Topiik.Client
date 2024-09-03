@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Markup;
-using Topiik.Clien.Arg;
+using Topiik.Client.Arg;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Topiik.Client

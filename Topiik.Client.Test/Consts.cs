@@ -11,6 +11,7 @@ namespace Topiik.Client.Test
         public const string ERR_DT_MISMATCH = "DT_MISMATCH";
 
         public const string KEY_USER_00001 = "user:00001";
+        public const string KEY_CITIES = "cities";
 
         public const string CITY_SHANGHAI = "Shanghai";
         public const string CITY_SINGAPORE = "Singapore";

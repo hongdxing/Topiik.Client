@@ -26,7 +26,7 @@ namespace Topiik.Client.Test
         [Test]
         public void GET_Should_Return_Value()
         {
-            client.Set("k1", "v1", new Clien.Arg.StrSetArg());
+            client.Set("k1", "v1", new Client.Arg.StrSetArg());
 
             var value = client.Get("k1");
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Topiik.Clien.Arg
+namespace Topiik.Client.Arg
 {
     public class StrSetArg
     {
