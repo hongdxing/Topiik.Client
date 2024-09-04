@@ -132,6 +132,30 @@ namespace Topiik.Client.Test
             Assert.That(fruits.Count, Is.EqualTo(N));
         }
 
+        #region LSET
+        [Test]
+        public void LSET_Should_Return_OK_If_Key_Exists_And_Index_IsValid()
+        {
+            client.Del(Consts.KEY_FRUITS);
+            client.LPush(Consts.KEY_FRUITS, Consts.FRUIT_APPLE);
+            client.LPush(Consts.KEY_FRUITS, Consts.FRUIT_BANANA);
+            client.LPush(Consts.KEY_FRUITS, Consts.FRUIT_ORANGE);
+
+            var len = client.LLen(Consts.KEY_FRUITS);
+            Assert.That(len, Is.EqualTo(3));
+
+            client.LSet(Consts.KEY_FRUITS, Consts.FRUIT_BLACK_BERRY, 1);
+
+            len = client.LLen(Consts.KEY_FRUITS);
+            Assert.That(len, Is.EqualTo(3));
+
+            var fruits = client.LPop(Consts.KEY_FRUITS, 3);
+            Assert.That(fruits.Count, Is.EqualTo(3));
+
+            Assert.That(fruits[1], Is.EqualTo(Consts.FRUIT_BLACK_BERRY));
+        }
+        #endregion
+
 
         [OneTimeTearDown]
         public void TearDown()

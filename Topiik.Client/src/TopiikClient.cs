@@ -208,7 +208,11 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
-
+        public string LSet(string key, string value, int index)
+        {
+            var data = Req.Build(Commands.LSET).WithKey(key).WithVal(value).WithArgs(index).Marshal();
+            return connection.Execute(data);
+        }
         #endregion
 
         public void Dispose()
@@ -237,5 +241,6 @@ namespace Topiik.Client
                 Console.WriteLine(ex.ToString());
             }
         }
+
     }
 }

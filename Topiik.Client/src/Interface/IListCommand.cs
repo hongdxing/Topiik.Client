@@ -67,5 +67,8 @@ namespace Topiik.Client.Interface
          *  - list of elements in list from start to end(exclusive)
          */
         List<string> LRange(string key, int start, int end);
+
+        String LSet(string key, string value, int index);
+
     }
 }

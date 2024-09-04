@@ -12,6 +12,7 @@ namespace Topiik.Client.Test
 
         public const string KEY_USER_00001 = "user:00001";
         public const string KEY_CITIES = "cities";
+        public const string KEY_FRUITS = "fruites";
 
         public const string CITY_SHANGHAI = "Shanghai";
         public const string CITY_SINGAPORE = "Singapore";
