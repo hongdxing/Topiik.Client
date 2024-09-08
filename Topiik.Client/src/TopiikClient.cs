@@ -76,22 +76,31 @@ namespace Topiik.Client
         public bool Exists(string key)
         {
             var data = Req.Build(Commands.EXISTS).WithKey(key).Marshal();
-            connection.Send(data);
-            long result = connection.Receive();
-            if (result > 0)
+            var result = connection.Execute(data);
+            if (result.Count > 0)
             {
-                return true;
+                return result[0] == "T" ? true : false;
             }
             return false;
         }
 
-        public long Exists(params string[] keys)
+        public IEnumerable<bool> Exists(params string[] keys)
         {
             var data = Req.Build(Commands.EXISTS).WithKeys(keys).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            var result = connection.Execute(data);
+            foreach (var str in result)
+            {
+                yield return str == "T" ? true : false;
+            }
         }
 
+        /*
+         * Get ttl of key
+         * Return:
+         *  - ttl if key exists and ttl greater than 0
+         *  - -1 if ttl not set
+         *  - -2 if key not exists
+         */
         public long Ttl(string key)
         {
             var data = Req.Build(Commands.TTL).WithKey(key).Marshal();
@@ -99,6 +108,12 @@ namespace Topiik.Client
             return connection.Receive();
         }
 
+        /*
+         * Set ttl of key
+         * Return:
+         *  - 1 if the ttl set
+         *  - -2 if the key not exists
+         */
         public long Ttl(string key, long seconds)
         {
             var args = new TtlArg { Seconds = seconds };

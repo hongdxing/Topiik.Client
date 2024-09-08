@@ -39,30 +39,34 @@ namespace Topiik.Client.Test
         }
 
         [Test]
-        public void Exists_Should_Return_N_If_N_Keys_Exists()
+        public void Exists_Should_Return_All_True_If_All_Keys_Exists()
         {
-            int N = 2;
             client.Del("existKey");
             client.Del("existList");
             client.Set("existKey", "Topiik");
             client.LPush("existList", new string[] { "Banana", "Apple", "Orange" });
 
-            var count = client.Exists("existKey", "existList");
-            Assert.That(count, Is.EqualTo(N));
+            var result = client.Exists("existKey", "existList");
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.ToArray()[0], Is.EqualTo(true));
+            Assert.That(result.ToArray()[1], Is.EqualTo(true));
         }
 
         [Test]
-        public void Exists_Should_Return_Actual_N_If_Some_Keys_Not_Exists()
+        public void Exists_Should_Return_False_If_The_Key_Not_Exists()
         {
-            int N = 2;
             client.Del("existKey");
             client.Del("existList");
             client.Del("NonExistKey");
             client.Set("existKey", "Topiik");
             client.LPush("existList", new string[] { "Banana", "Apple", "Orange" });
 
-            var count = client.Exists("existKey", "existList", "NonExistKey");
-            Assert.That(count, Is.EqualTo(N));
+            var result = client.Exists("existKey", "existList", "NonExistKey");
+            Assert.That(result.Count, Is.EqualTo(3));
+
+            Assert.That(result.ToArray()[0], Is.EqualTo(true));
+            Assert.That(result.ToArray()[1], Is.EqualTo(true));
+            Assert.That(result.ToArray()[2], Is.EqualTo(false));
         }
 
         [Test]

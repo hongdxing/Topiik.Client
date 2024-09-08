@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using NUnit.Framework;
 
 namespace Topiik.Client.Test
 {
     [TestFixture]
-    public class HashTest
+    public class ZSetTest
     {
         private string serverAddr;
         private ITopiikClient client;

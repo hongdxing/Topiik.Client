@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Topiik.Client.Test
 {
     [TestFixture]
-    public class HashTest
+    public class StreamTest
     {
         private string serverAddr;
         private ITopiikClient client;
