@@ -99,7 +99,7 @@ namespace Topiik.Client.Test
             Assert.That(value, Is.EqualTo("Tom"));
             //Thread.Sleep(1500);
 
-            Assert.That(() => client.Ttl(Consts.KEY_USER_00001), Is.EqualTo(-2).After(1000));
+            Assert.That(() => client.Ttl(TestConsts.KEY_USER_00001), Is.EqualTo(-2).After(1000));
 
             Assert.That(() => client.Get("user:00001"), Is.EqualTo(null).After(1000));
         }

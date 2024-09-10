@@ -9,11 +9,8 @@ namespace Topiik.Client
     public interface IConnection
     {
         public bool InUse { get; set; }     
-        int Send(byte[] data);
 
-        public dynamic Receive();
-
-        dynamic Execute(byte[]data);
+        dynamic? Execute(byte[]data);
 
         void Close();
     }

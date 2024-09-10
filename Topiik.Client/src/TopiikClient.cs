@@ -69,8 +69,7 @@ namespace Topiik.Client
         public long Del(params string[] keys)
         {
             var data = Req.Build(Commands.DEL).WithKeys(keys).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public bool Exists(string key)
@@ -104,8 +103,7 @@ namespace Topiik.Client
         public long Ttl(string key)
         {
             var data = Req.Build(Commands.TTL).WithKey(key).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         /*
@@ -118,15 +116,13 @@ namespace Topiik.Client
         {
             var args = new TtlArg { Seconds = seconds };
             var data = Req.Build(Commands.TTL).WithKey(key).WithArgs(args).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public long Ttl(string key, TtlArg args)
         {
             var data = Req.Build(Commands.DEL).WithKey(key).WithArgs(args).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         #endregion
@@ -141,37 +137,27 @@ namespace Topiik.Client
         public List<string> GetM(params string[] keys)
         {
             var data = Req.Build(Commands.GETM).WithKeys(keys).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            var vals = connection.Execute(data);
+            return vals == null ? new List<string>() : vals;
         }
 
         public long Incr(string key, long step = 1)
         {
             var data = Req.Build(Commands.INCR).WithKey(key).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public string Set(string key, string value, StrSetArg? args)
         {
-            /* build data */
             var data = Req.Build(Commands.SET).WithKey(key).WithVal(value).WithArgs(args).Marshal();
-
-            /* send */
-            connection.Send(data);
-
-            /* get result */
-            var result = connection.Receive();
-
-            return result;
+            return connection.Execute(data);
         }
 
         public string SetM(Dictionary<string, string> keyValues)
         {
             var data = Req.Build(Commands.SETM).WithKeys(keyValues.Keys.ToArray())
                 .WithVals(keyValues.Values.ToArray()).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
         #endregion
 
@@ -179,46 +165,40 @@ namespace Topiik.Client
         public long LPush(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSH).WithKey(key).WithVals(values).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public long LPushR(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSHR).WithKey(key).WithVals(values).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public List<string> LPop(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public List<string> LPopR(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public long LLen(string key)
         {
             var data = Req.Build(Commands.LLEN).WithKey(key).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public List<string> LRange(string key, int start, int end)
         {
             var args = new ListRangeArg { Start = start, End = end };
             var data = Req.Build(Commands.LRANGE).WithKey(key).WithArgs(args).Marshal();
-            connection.Send(data);
-            return connection.Receive();
+            return connection.Execute(data);
         }
 
         public string LSet(string key, string value, int index)

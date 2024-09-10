@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Topiik.Client.Test
 {
-    internal class Consts
+    internal class TestConsts
     {
-        public const string ERR_DT_MISMATCH = "DT_MISMATCH";
+        public const string SERVERS = "localhost:8301,localhost:8302";
+        public const string ERR_TYPE_MISMATCH = "TYPE_MISMATCH";
 
         public const string KEY_USER_00001 = "user:00001";
         public const string KEY_CITIES = "cities";

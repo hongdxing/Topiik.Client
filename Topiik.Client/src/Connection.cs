@@ -29,11 +29,6 @@ namespace Topiik.Client
 
         }
 
-        public int Send(byte[] data)
-        {
-            return socket.Send(data);
-        }
-
         #region private
         string GetControllerLeaderAddr(string addr)
         {
@@ -83,55 +78,15 @@ namespace Topiik.Client
             return bytes;
         }
 
-        public dynamic Receive()
-        {
-            (int len, byte flag, byte datatye) header = (0, 0, 0);
-            byte[] body = { };
-            try
-            {
-                header = ReceiveHeader(socket);
-                body = ReceiveBody(socket, header.len - 2);
-            }
-            catch (Exception) { }
-            if (header.flag == 0)
-            {
-                throw new Exception(Encoding.UTF8.GetString(body));
-            }
-            if (header.datatye == Response.ResString)
-            {
-                var rslt = Encoding.UTF8.GetString(body);
-                return rslt;
-            }
-            else if (header.datatye == Response.ResStringArray)
-            {
-                var rslt = JsonSerializer.Deserialize<List<String>>(body);
-                return rslt == null ? new List<string>() : rslt;
-            }
-            else if (header.datatye == Response.ResIneger)
-            {
-                var rslt = BitConverter.ToInt64(body);
-                return rslt;
-            }
-            else if (header.datatye == Response.ResIntegerArray)
-            {
-                var rslt = JsonSerializer.Deserialize<List<long>>(body);
-                return rslt == null ? new List<long>() : rslt;
-            }
-            else
-            {
-                return "";
-            }
-
-        }
-
         public dynamic? Execute(byte[] data)
         {
             (int len, byte flag, byte datatye) header = (0, 0, 0);
             byte[] body = { };
             // TODO: retry
+            SendData(data);
             try
             {
-                socket.Send(data);
+                //socket.Send(data);
                 header = ReceiveHeader(socket);
                 body = ReceiveBody(socket, header.len - 2);
             }
@@ -143,7 +98,7 @@ namespace Topiik.Client
             if (header.datatye == Response.ResString)
             {
                 var val = Encoding.UTF8.GetString(body);
-                if (val == Const.Nil)
+                if (val == Consts.Nil)
                 {
                     return null;
                 }
@@ -158,7 +113,7 @@ namespace Topiik.Client
                 }
                 for (var i=0; i<vals.Count; i++)
                 {
-                    if (vals[i] == Const.Nil)
+                    if (vals[i] == Consts.Nil)
                     {
                         vals[i] = null;
                     }
@@ -178,6 +133,31 @@ namespace Topiik.Client
             else
             {
                 return "";
+            }
+        }
+
+        private int SendData(byte[] data)
+        {
+            long time1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            for(; ; )
+            {
+                try
+                {
+                    return socket.Send(data);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    // 5 seconds, TODO: configurable?
+                    if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - time1 < 5000)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw new System.TimeoutException();
+                    }
+                }
             }
         }
 

@@ -8,39 +8,36 @@ using NUnit.Framework;
 namespace Topiik.Client.Test.StringTest
 {
     [TestFixture]
-    public class GetTest
+    public class SetTest
     {
+        private string serverAddr;
         private ITopiikClient client;
         private IConnectionFactory connectionFactory;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            connectionFactory = new ConnectionFactory(TestConsts.SERVERS);
+            serverAddr = "localhost:8301";
+            connectionFactory = new ConnectionFactory(serverAddr);
             client = new TopiikClient(connectionFactory);
         }
 
-
+        /*
+         * SET will overwrite any existing key even the existing key type is not String type
+         */
         [Test]
-        public void GET_Should_Return_Value_If_String_Key_Exists()
+        public void SET_Will_Overwrite_Existing_List_Key()
         {
-            client.Set("k1", "v1", new Client.Arg.StrSetArg());
+            /* LPUSH fruits apple orange banana */
 
-            var value = client.Get("k1");
+            /* Assert LPUSH succeed */
 
-            Assert.That(value, Is.EqualTo("v1"));
+            /* SET fruits abc */
+
+            /* GET fruits */
+
+            /* Assert result ecquals to abc */
         }
-
-        [Test]
-        public void Get_Should_Return_null_If_Key_Not_Exists()
-        {
-            var key = "Not-Exists";
-            client.Del(key);
-            var result = client.Get(key);
-
-            Assert.That(result, Is.Null);
-        }
-
 
         [OneTimeTearDown]
         public void TearDown()

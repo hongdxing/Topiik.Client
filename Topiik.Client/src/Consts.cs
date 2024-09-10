@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Topiik.Client
 {
-    public class Const
+    public class Consts
     {
         public const string Nil = "\r\n";
     }
