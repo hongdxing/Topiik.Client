@@ -135,9 +135,7 @@ namespace Topiik.Client
         public string Get(string key)
         {
             var data = Req.Build(Commands.GET).WithKey(key).Marshal();
-            connection.Send(data);
-            var result = connection.Receive();
-            return result;
+            return connection.Execute(data);
         }
 
         public List<string> GetM(params string[] keys)

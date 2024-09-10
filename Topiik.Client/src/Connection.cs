@@ -124,7 +124,7 @@ namespace Topiik.Client
 
         }
 
-        public dynamic Execute(byte[] data)
+        public dynamic? Execute(byte[] data)
         {
             (int len, byte flag, byte datatye) header = (0, 0, 0);
             byte[] body = { };
@@ -142,13 +142,28 @@ namespace Topiik.Client
             }
             if (header.datatye == Response.ResString)
             {
-                var rslt = Encoding.UTF8.GetString(body);
-                return rslt;
+                var val = Encoding.UTF8.GetString(body);
+                if (val == Const.Nil)
+                {
+                    return null;
+                }
+                return val;
             }
             else if (header.datatye == Response.ResStringArray)
             {
-                var rslt = JsonSerializer.Deserialize<List<String>>(body);
-                return rslt == null ? new List<string>() : rslt;
+                var vals = JsonSerializer.Deserialize<List<String?>>(body);
+                if (vals == null)
+                {
+                    return new List<string>();
+                }
+                for (var i=0; i<vals.Count; i++)
+                {
+                    if (vals[i] == Const.Nil)
+                    {
+                        vals[i] = null;
+                    }
+                }
+                return vals;
             }
             else if (header.datatye == Response.ResIneger)
             {
@@ -168,7 +183,7 @@ namespace Topiik.Client
 
         public void Close()
         {
-            if(socket != null)
+            if (socket != null)
             {
                 socket.Close();
             }

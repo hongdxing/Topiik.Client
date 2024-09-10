@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Topiik.Client.Interface;
 
-namespace Topiik.Client.Test
+namespace Topiik.Client.Test.StringTest
 {
     [TestFixture]
     public class StringTest

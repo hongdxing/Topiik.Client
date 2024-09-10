@@ -101,7 +101,7 @@ namespace Topiik.Client.Test
 
             Assert.That(() => client.Ttl(Consts.KEY_USER_00001), Is.EqualTo(-2).After(1000));
 
-            Assert.That(() => client.Get("user:00001"), Is.EqualTo(Consts.RES_NIL).After(1000));
+            Assert.That(() => client.Get("user:00001"), Is.EqualTo(null).After(1000));
         }
 
         [OneTimeTearDown]
