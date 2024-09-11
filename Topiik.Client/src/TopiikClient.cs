@@ -178,14 +178,16 @@ namespace Topiik.Client
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            var vals = connection.Execute(data);
+            return vals == null ? new List<string>() : vals;
         }
 
         public List<string> LPopR(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            var vals = connection.Execute(data);
+            return vals == null ? new List<string>() : vals;
         }
 
         public long LLen(string key)
@@ -194,11 +196,12 @@ namespace Topiik.Client
             return connection.Execute(data);
         }
 
-        public List<string> LRange(string key, int start, int end)
+        public List<string> LSlice(string key, int start, int end)
         {
-            var args = new ListRangeArg { Start = start, End = end };
+            var args = new ListSliceArg { Start = start, End = end };
             var data = Req.Build(Commands.LRANGE).WithKey(key).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            var vals = connection.Execute(data);
+            return vals == null ? new List<string>() : vals;
         }
 
         public string LSet(string key, string value, int index)

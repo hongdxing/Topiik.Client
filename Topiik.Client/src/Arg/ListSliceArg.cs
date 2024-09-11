@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Topiik.Client.Arg
 {
-    public class ListRangeArg
+    public class ListSliceArg
     {
         public long Start { get; set; }
         public long End { get; set; }
@@ -14,7 +14,7 @@ namespace Topiik.Client.Arg
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append($"{Start} {End}");
+            sb.Append($"{Start}:{End}");
             return sb.ToString();
         }
     }

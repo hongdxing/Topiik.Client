@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Topiik.Client.Test.StringTest
+namespace Topiik.Client.Test.StringTests
 {
     [TestFixture]
-    public class SetmTeset
+    public class SetmTest
     {
         private string serverAddr;
         private ITopiikClient client;

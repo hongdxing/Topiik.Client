@@ -18,10 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ListTest\" />
-    <Folder Include="HashTest\" />
-    <Folder Include="ZSetTest\" />
-    <Folder Include="SetTest\" />
+    <Folder Include="HashTests\" />
+    <Folder Include="ZSetTests\" />
+    <Folder Include="SetTests\" />
   </ItemGroup>
 
 </Project>

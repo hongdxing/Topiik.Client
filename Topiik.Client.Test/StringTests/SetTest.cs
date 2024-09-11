@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Topiik.Client.Test.StringTest
+namespace Topiik.Client.Test.StringTests
 {
     [TestFixture]
     public class SetTest
