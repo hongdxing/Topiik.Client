@@ -18,50 +18,31 @@ namespace Topiik.Client
             connection = connectionFactory.GetConnection();
         }
 
-        #region private
+        #region Private
 
-        /*
-        private void Receive(Socket socket)
+        private dynamic? Execute(byte[] data)
         {
-            int receivedLen = 0;
-            byte[] staticBuf = new byte[1024];
-            byte[] dynamicBuf = new byte[] { };
-
-            do
+            long time1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            for (; ; )
             {
-                receivedLen = socket.Receive(staticBuf);
-                dynamicBuf = combineBytes(dynamicBuf, 0, dynamicBuf.Length, staticBuf, 0, staticBuf.Length);
-                if (receivedLen <= 0)
+                try
                 {
-                    break;
+                    return connection.Execute(data);
                 }
-                else if (dynamicBuf.Length < Proto.PROTO_HEADER_LEN)
+                catch (SocketException ex)
                 {
-                    continue;
-                }
-                else
-                {
-                    var header = Proto.ParseHeader(dynamicBuf);
-                    while (dynamicBuf.Length - Proto.PROTO_HEADER_LEN >= header.len)
+                    Console.WriteLine(ex.Message);
+                    // 5 seconds, TODO: configurable?
+                    if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - time1 < 5000)
                     {
-
+                        // refresh connection
+                        if (connection != null) { connection.Close(); }
+                        connection = connFactory.GetConnection();
+                        continue;
                     }
                 }
-
-            } while (receivedLen > 0);
+            }
         }
-
-        private byte[] combineBytes(byte[] firstBytes, int firstIndex, int firstLength, byte[] secondBytes, int secondIndex, int secondLength)
-        {
-            byte[] bytes;
-            MemoryStream ms = new MemoryStream();
-            ms.Write(firstBytes, firstIndex, firstLength);
-            ms.Write(secondBytes, secondIndex, secondLength);
-            bytes = ms.ToArray();
-            ms.Close();
-            return (bytes);
-        }
-        */
 
         #endregion
 
@@ -69,13 +50,13 @@ namespace Topiik.Client
         public long Del(params string[] keys)
         {
             var data = Req.Build(Commands.DEL).WithKeys(keys).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public bool Exists(string key)
         {
             var data = Req.Build(Commands.EXISTS).WithKey(key).Marshal();
-            var result = connection.Execute(data);
+            var result = Execute(data);
             if (result.Count > 0)
             {
                 return result[0] == "T" ? true : false;
@@ -86,7 +67,7 @@ namespace Topiik.Client
         public IEnumerable<bool> Exists(params string[] keys)
         {
             var data = Req.Build(Commands.EXISTS).WithKeys(keys).Marshal();
-            var result = connection.Execute(data);
+            var result = Execute(data);
             foreach (var str in result)
             {
                 yield return str == "T" ? true : false;
@@ -116,13 +97,13 @@ namespace Topiik.Client
         {
             var args = new TtlArg { Seconds = seconds };
             var data = Req.Build(Commands.TTL).WithKey(key).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public long Ttl(string key, TtlArg args)
         {
             var data = Req.Build(Commands.DEL).WithKey(key).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         #endregion
@@ -131,33 +112,33 @@ namespace Topiik.Client
         public string Get(string key)
         {
             var data = Req.Build(Commands.GET).WithKey(key).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public List<string> GetM(params string[] keys)
         {
             var data = Req.Build(Commands.GETM).WithKeys(keys).Marshal();
-            var vals = connection.Execute(data);
+            var vals = Execute(data);
             return vals == null ? new List<string>() : vals;
         }
 
         public long Incr(string key, long step = 1)
         {
             var data = Req.Build(Commands.INCR).WithKey(key).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public string Set(string key, string value, StrSetArg? args)
         {
             var data = Req.Build(Commands.SET).WithKey(key).WithVal(value).WithArgs(args).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public string SetM(Dictionary<string, string> keyValues)
         {
             var data = Req.Build(Commands.SETM).WithKeys(keyValues.Keys.ToArray())
                 .WithVals(keyValues.Values.ToArray()).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
         #endregion
 
@@ -165,20 +146,20 @@ namespace Topiik.Client
         public long LPush(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSH).WithKey(key).WithVals(values).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public long LPushR(string key, params string[] values)
         {
             var data = Req.Build(Commands.LPUSHR).WithKey(key).WithVals(values).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public List<string> LPop(string key, int count = 1)
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOP).WithKey(key).WithArgs(args).Marshal();
-            var vals = connection.Execute(data);
+            var vals = Execute(data);
             return vals == null ? new List<string>() : vals;
         }
 
@@ -186,28 +167,28 @@ namespace Topiik.Client
         {
             var args = new ListPopArg { Count = count };
             var data = Req.Build(Commands.LPOPR).WithKey(key).WithArgs(args).Marshal();
-            var vals = connection.Execute(data);
+            var vals = Execute(data);
             return vals == null ? new List<string>() : vals;
         }
 
         public long LLen(string key)
         {
             var data = Req.Build(Commands.LLEN).WithKey(key).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
 
         public List<string> LSlice(string key, int start, int end)
         {
             var args = new ListSliceArg { Start = start, End = end };
             var data = Req.Build(Commands.LRANGE).WithKey(key).WithArgs(args).Marshal();
-            var vals = connection.Execute(data);
+            var vals = Execute(data);
             return vals == null ? new List<string>() : vals;
         }
 
         public string LSet(string key, string value, int index)
         {
             var data = Req.Build(Commands.LSET).WithKey(key).WithVal(value).WithArgs(index).Marshal();
-            return connection.Execute(data);
+            return Execute(data);
         }
         #endregion
 

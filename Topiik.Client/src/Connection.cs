@@ -82,15 +82,11 @@ namespace Topiik.Client
         {
             (int len, byte flag, byte datatye) header = (0, 0, 0);
             byte[] body = { };
-            // TODO: retry
-            SendData(data);
-            try
-            {
-                //socket.Send(data);
-                header = ReceiveHeader(socket);
-                body = ReceiveBody(socket, header.len - 2);
-            }
-            catch (Exception) { }
+
+            socket.Send(data);
+            header = ReceiveHeader(socket);
+            body = ReceiveBody(socket, header.len - 2);
+
             if (header.flag == 0)
             {
                 throw new Exception(Encoding.UTF8.GetString(body));
@@ -111,7 +107,7 @@ namespace Topiik.Client
                 {
                     return new List<string>();
                 }
-                for (var i=0; i<vals.Count; i++)
+                for (var i = 0; i < vals.Count; i++)
                 {
                     if (vals[i] == Consts.Nil)
                     {
@@ -133,31 +129,6 @@ namespace Topiik.Client
             else
             {
                 return "";
-            }
-        }
-
-        private int SendData(byte[] data)
-        {
-            long time1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            for(; ; )
-            {
-                try
-                {
-                    return socket.Send(data);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    // 5 seconds, TODO: configurable?
-                    if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - time1 < 5000)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        throw new System.TimeoutException();
-                    }
-                }
             }
         }
 
